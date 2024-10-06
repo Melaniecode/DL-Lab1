@@ -1,0 +1,1 @@
+想法及步驟寫在github中： https://github.com/Melaniecode/DL-Lab1
