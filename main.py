@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 
 # 整理資料需要的 class
 class DataLoader:
-
     def __init__(self, file_path):
         self.file_path = file_path; # 檔案位置
         self.data_list = []; # 存放資料的 list
@@ -36,19 +35,18 @@ class Regression:
         
         # 梯度下降法計算
         for time in range(max_times):
-            # 計算預測值
-            y_pred = np.dot(x, self.weights) + self.bias; 
+            y_pred = np.dot(self.weights, x.T) + self.bias; 
 
             # 計算均方誤差 (MSE)
-            mse = np.mean(np.square(y_pred-y)); 
+            mse = np.mean(np.square(y - y_pred)); 
             mse_history.append(mse); 
-
-            w = (1 / len(y)) * np.dot(x.T, (y_pred-y));   # 計算權重的梯度
-            self.weights -= learning_rate*w;   # 更新權重
+           
+            w = (1 / len(y)) * np.dot((y - y_pred), x);   # 計算權重的梯度
+            self.weights += learning_rate * w;   # 更新權重
 
             # 更新偏差
-            b = (1 / len(y)) * np.sum(y_pred-y);   # 計算偏差的梯度
-            self.bias -= learning_rate*b;   # 更新偏差
+            b = (1 / len(y)) * np.sum(y - y_pred);   # 計算偏差的梯度
+            self.bias += learning_rate * b;   # 更新偏差
 
             # 判斷終止條件
             if mse < mse_limit:
@@ -61,9 +59,8 @@ class Regression:
 
         return mse_history; 
 
-
     def predict(self, X):
-        return np.dot(X, self.weights)+self.bias; 
+        return np.dot(self.weights, X.T) + self.bias; 
 
 # 給 Lab1_traindata.csv 檔案資料
 data_loader = DataLoader("Lab1_traindata.csv"); 
@@ -73,7 +70,6 @@ random.seed(0)  # 設定亂數種子碼
 np.random.shuffle(data)  # 將輸入資料打亂
 x = data[:, :-1]  # x1, x2, x3
 y = data[:, -1]   # y
-
 
 # 訓練模型
 regression = Regression(); 
@@ -86,7 +82,6 @@ ya = regression.predict(xa)
 yb = regression.predict(xb)
 print(f"預測值 ya: {ya}")
 print(f"預測值 yb: {yb}")
-
 
 # 印出 output.png
 plt.plot(mse_history, label='MSE', color='blue'); 
